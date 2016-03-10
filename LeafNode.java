@@ -49,9 +49,9 @@ public class LeafNode<K extends Comparable<K>, T> extends Node<K, T> {
 
 		}
 	}
-	
+
 	public ArrayList<T> getValues() {
-		ArrayList<T> vals = values;
-		return vals;
+		return values;
 	}
+
 }

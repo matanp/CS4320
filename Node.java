@@ -8,13 +8,16 @@ public class Node<K extends Comparable<K>, T> {
 		return keys.size() > 2 * BPlusTree.D;
 	}
 
+	public boolean willBeOverflowed() {
+		return keys.size() + 1 > 2 * BPlusTree.D;
+	}
+
 	public boolean isUnderflowed() {
 		return keys.size() < BPlusTree.D;
 	}
-	
+
 	public ArrayList<K> getKeys() {
-		ArrayList<K> keysList = keys;
-		return keysList;
+		return keys;
 	}
 
 }

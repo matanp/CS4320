@@ -10,13 +10,15 @@ public class BPlusTree<K extends Comparable<K>, T> {
 
 	public Node<K,T> root;
 	public static final int D = 2;
-	 
+
 	public BPlusTree(Node<K,T> root1) {
 		root = root1;
 	}
 	public BPlusTree() {
 		root = new Node();
 	}
+
+
 	/**
 	 * TODO Search the value for a specific key
 	 * 
@@ -24,7 +26,6 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @return value
 	 */
 	public T search(K key) {
-		//ArrayList<T> of values
 		if(root.isLeafNode) {
 			LeafNode root1 = (LeafNode) root;
 			if(root1.keys.contains(key)) {
@@ -41,7 +42,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			} else {
 				newroot = (Node) root1.children.get(1);
 			}
-			BPlusTree b = new BPlusTree(newroot);
+			BPlusTree<K,T> b = new BPlusTree<K,T>(newroot);
 			T answer = (T) b.search(key);
 			return answer;
 		}
@@ -54,7 +55,25 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @param value
 	 */
 	public void insert(K key, T value) {
+		if(root.isLeafNode) {
+			if(!root.willBeOverflowed()) {
+				//Add key, value pair to root
+			} else if()
 
+
+		} else {
+			IndexNode root1 = (IndexNode) root;
+			int i;
+			if(key.compareTo((K) root1.keys.get(0))<0){
+				i=0;
+			} else {
+				i=1;
+			}
+			Node newroot = (Node) root1.children.get(i);
+			BPlusTree<K,T> b = new BPlusTree<K,T>(newroot);
+			BPlusTree<K,T> result = b.insert(key, value);
+			root1.children.get(i) = result;
+		}
 	}
 
 	/**
@@ -123,6 +142,19 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	public int handleIndexNodeUnderflow(IndexNode<K,T> leftIndex,
 			IndexNode<K,T> rightIndex, IndexNode<K,T> parent) {
 		return -1;
+	}
+
+	public static void main(String[] args){
+	LeafNode<Integer, String> child1 = new LeafNode<Integer, String>(1, "A");
+	LeafNode<Integer, String> child2 = new LeafNode<Integer, String>(3, "C");
+	IndexNode<Integer, String> root = new IndexNode<Integer, String>(2, child1, child2);
+	BPlusTree<Integer, String> bplus = new BPlusTree<Integer, String>(root);
+	String result = bplus.search(1);
+	System.out.println(result);
+	String result2 = bplus.search(2);
+	System.out.println(result2);
+	String result3 = bplus.search(3);
+	System.out.println(result3);
 	}
 
 }
