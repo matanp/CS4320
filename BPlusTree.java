@@ -26,25 +26,26 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @return value
 	 */
 	public T search(K key) {
-		if(root.isLeafNode) {
-			LeafNode root1 = (LeafNode) root;
-			if(root1.keys.contains(key)) {
-				int i = root1.getKeys().indexOf(key);
-				return (T) root1.getValues().get(i);
-			} else {
-				return null; //key not found
-			}	
+		LeafNode<K,T> result = (LeafNode<K,T>) searchHelper(root, key);
+		int i = result.keys.indexOf(key);
+		if(i>=0){
+			return result.values.get(i);
 		} else {
-			IndexNode root1 = (IndexNode) root;
-			Node newroot;
-			if(key.compareTo((K) root1.keys.get(0)) < 0) {
-				newroot = (Node) root1.children.get(0);
-			} else {
-				newroot = (Node) root1.children.get(1);
-			}
-			BPlusTree<K,T> b = new BPlusTree<K,T>(newroot);
-			T answer = (T) b.search(key);
-			return answer;
+			return null;
+		}
+	}
+
+	private Node searchHelper(Node<K,T> node, K key) {
+		if(node.isLeafNode) {
+			return node;
+		} else {
+			IndexNode<K,T> node1 = (IndexNode<K,T>) node;
+			for (int i=0; i<node1.keys.size(); i++) {
+				if(key.compareTo(node1.keys.get(i))<0) {
+					return searchHelper(node1.children.get(i), key);
+				}
+			} 
+			return searchHelper(node1.children.get(node1.keys.size()), key);
 		}
 	}
 
@@ -55,7 +56,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @param value
 	 */
 	public void insert(K key, T value) {
-		if(root.isLeafNode) {
+		/*if(root.isLeafNode) {
 			if(!root.willBeOverflowed()) {
 				//Add key, value pair to root
 			} else if()
@@ -71,10 +72,17 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			}
 			Node newroot = (Node) root1.children.get(i);
 			BPlusTree<K,T> b = new BPlusTree<K,T>(newroot);
-			BPlusTree<K,T> result = b.insert(key, value);
+			BPlusTree<K,T> result = b.insert2(key, value, root);
 			root1.children.get(i) = result;
 		}
+		*/
 	}
+
+	/** public void insert2(K key, T value, IndexNode parent) {
+	*	if(parent key has space) {
+			parent.insertSorted(
+		}
+	} */
 
 	/**
 	 * TODO Split a leaf node and return the new right node and the splitting
