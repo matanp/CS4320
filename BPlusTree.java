@@ -1,5 +1,7 @@
 import java.util.AbstractMap;
 import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * BPlusTree Class Assumptions: 1. No duplicate keys inserted 2. Order D:
@@ -49,6 +51,9 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		}
 	}
 
+
+
+
 	/**
 	 * TODO Insert a key/value pair into the BPlusTree
 	 * 
@@ -56,33 +61,71 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @param value
 	 */
 	public void insert(K key, T value) {
-		/*if(root.isLeafNode) {
-			if(!root.willBeOverflowed()) {
-				//Add key, value pair to root
-			} else if()
+		K pair1 = null;
+		Node<K,T> pair2 = null; 
+		insertHelper(root, key, value, pair1, pair2);
+		if(pair1 != null){ //Root needs to be split
 
-
-		} else {
-			IndexNode root1 = (IndexNode) root;
-			int i;
-			if(key.compareTo((K) root1.keys.get(0))<0){
-				i=0;
-			} else {
-				i=1;
-			}
-			Node newroot = (Node) root1.children.get(i);
-			BPlusTree<K,T> b = new BPlusTree<K,T>(newroot);
-			BPlusTree<K,T> result = b.insert2(key, value, root);
-			root1.children.get(i) = result;
 		}
-		*/
 	}
 
-	/** public void insert2(K key, T value, IndexNode parent) {
-	*	if(parent key has space) {
-			parent.insertSorted(
+	public void insertHelper(Node<K,T> root, K key, T value, K pair1, Node<K,T> pair2) {
+		if(!root.isLeafNode) {  //root is an index
+			IndexNode<K,T> root1 = (IndexNode<K,T>) root;
+			int i=0;
+			for(int j=1; j<root1.keys.size(); j++) {
+				if(key.compareTo(root1.keys.get(j))<0) {
+					i++;
+				}
+			}
+			if(key.compareTo(root1.keys.get(root1.keys.size()))>=0){
+				i++;
+			}
+			Node newnode = root1.children.get(i);
+			insertHelper(newnode, key, value, pair1, pair2);
+			if(pair1==null){
+				return;
+			} else {
+				root1.keys.add(pair1);
+				Collections.sort(root1.getKeys());
+				ArrayList<K> firstkeys = new ArrayList<K>(root1.getKeys().subList(0, D+1));
+				ArrayList<K> secondkeys = new ArrayList<K>(root1.getKeys().subList(D+2, root1.getKeys().size()));
+				ArrayList<Node<K,T>> firstchildren = new ArrayList<Node<K,T>>(root1.children.subList(0, D+2));
+				ArrayList<Node<K,T>> secondchildren = new ArrayList<Node<K,T>>(root1.children.subList(D+2, root1.children.size()));
+				root1.keys = firstkeys;
+				root1.children = firstchildren;
+				IndexNode<K,T> second = new IndexNode<K,T>(secondkeys, secondchildren);
+				pair1 = second.keys.get(0);
+				pair2 = second; 
+				return;
+			}
+		} else { //root is a leaf
+			LeafNode<K,T> root1 = (LeafNode<K,T>) root;
+			root1.keys.add(key);
+			Collections.sort(root1.keys);
+			int index = root1.keys.indexOf(key);
+			root1.values.add(index, value);
+			if(!root1.isOverflowed()){ //There's room to insert the pair
+				pair1 = null;
+				pair2 = null;
+				return;
+			} else {
+				ArrayList<K> keys1 = new ArrayList<K>(root1.keys.subList(0, D+1));
+				ArrayList<K> keys2 = new ArrayList<K>(root1.keys.subList(D+1, root1.keys.size()));
+				ArrayList<T> values1 = new ArrayList<T>(root1.values.subList(0, D+1));
+				ArrayList<T> values2 = new ArrayList<T>(root1.values.subList(D+1, root1.values.size()));
+				root1.keys = keys1;
+				root1.values = values1;
+				LeafNode<K,T> newLeaf = new LeafNode<K,T>(keys2, values2);
+				root1.nextLeaf.previousLeaf = newLeaf;
+				newLeaf.nextLeaf = root1.nextLeaf;
+				root1.nextLeaf = newLeaf;
+				pair1 = newLeaf.keys.get(0);
+				pair2 = newLeaf;
+				return;
+			}
 		}
-	} */
+	} 
 
 	/**
 	 * TODO Split a leaf node and return the new right node and the splitting
