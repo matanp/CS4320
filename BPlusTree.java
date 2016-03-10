@@ -10,7 +10,13 @@ public class BPlusTree<K extends Comparable<K>, T> {
 
 	public Node<K,T> root;
 	public static final int D = 2;
-
+	 
+	public BPlusTree(Node<K,T> root1) {
+		root = root1;
+	}
+	public BPlusTree() {
+		root = new Node();
+	}
 	/**
 	 * TODO Search the value for a specific key
 	 * 
@@ -18,7 +24,27 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @return value
 	 */
 	public T search(K key) {
-		return null;
+		//ArrayList<T> of values
+		if(root.isLeafNode) {
+			LeafNode root1 = (LeafNode) root;
+			if(root1.keys.contains(key)) {
+				int i = root1.getKeys().indexOf(key);
+				return (T) root1.getValues().get(i);
+			} else {
+				return null; //key not found
+			}	
+		} else {
+			IndexNode root1 = (IndexNode) root;
+			Node newroot;
+			if(key.compareTo((K) root1.keys.get(0)) < 0) {
+				newroot = (Node) root1.children.get(0);
+			} else {
+				newroot = (Node) root1.children.get(1);
+			}
+			BPlusTree b = new BPlusTree(newroot);
+			T answer = (T) b.search(key);
+			return answer;
+		}
 	}
 
 	/**
@@ -38,7 +64,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @param leaf, any other relevant data
 	 * @return the key/node pair as an Entry
 	 */
-	public Entry<K, Node<K,T>> splitLeafNode(LeafNode<K,T> leaf, ...) {
+	public Entry<K, Node<K,T>> splitLeafNode(LeafNode<K,T> leaf) {
 
 		return null;
 	}
@@ -50,7 +76,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @param index, any other relevant data
 	 * @return new key/node pair as an Entry
 	 */
-	public Entry<K, Node<K,T>> splitIndexNode(IndexNode<K,T> index, ...) {
+	public Entry<K, Node<K,T>> splitIndexNode(IndexNode<K,T> index) {
 
 		return null;
 	}

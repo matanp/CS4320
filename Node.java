@@ -11,5 +11,10 @@ public class Node<K extends Comparable<K>, T> {
 	public boolean isUnderflowed() {
 		return keys.size() < BPlusTree.D;
 	}
+	
+	public ArrayList<K> getKeys() {
+		ArrayList<K> keysList = keys;
+		return keysList;
+	}
 
 }
