@@ -1,4 +1,5 @@
 import java.util.AbstractMap;
+
 import java.util.Map.Entry;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,8 +71,10 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	}
 
 	public void insertHelper(Node<K,T> root, K key, T value, K pair1, Node<K,T> pair2) {
+		
 		if(!root.isLeafNode) {  //root is an index
-			IndexNode<K,T> root1 = (IndexNode<K,T>) root;
+			//System.out.println(root.getKeys());
+			IndexNode<K,T> root1 = new IndexNode<K,T>(root.getKeys().get(0));
 			int i=0;
 			for(int j=1; j<root1.keys.size(); j++) {
 				if(key.compareTo(root1.keys.get(j))<0) {
@@ -126,6 +129,10 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			}
 		}
 	} 
+	
+	public IndexNode<K,T> createIndexNode(Node<K,T> n) {
+		return new IndexNode<K, T>(n.getKeys().get(0), new Node<K, T>(), new Node<K, T>());
+	}
 
 	/**
 	 * TODO Split a leaf node and return the new right node and the splitting
