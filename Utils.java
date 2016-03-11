@@ -16,6 +16,9 @@ public class Utils {
 	public static <K extends Comparable<K>, T> void 
 	    bulkInsert(BPlusTree<K,T> b, K[] tests, T[] testValues) {
 		for (int i = 0; i < tests.length; i++) {
+			System.out.println(b.toString());
+			System.out.println(b.root);
+			System.out.println(b.root.getKeys());
 			b.insert(tests[i], testValues[i]);
 		}
 
@@ -61,7 +64,7 @@ public class Utils {
   
       }
     } else {
-      IndexNode<K,T> index = ((IndexNode<K,T>) target);
+      IndexNode<K,T> index = new IndexNode<K, T>(target.getKeys().get(0));
       result += "@";
       for (int i = 0; i < index.keys.size(); i++) {
         result += "" + index.keys.get(i) + "/";
