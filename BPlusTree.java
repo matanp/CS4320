@@ -19,7 +19,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		root = root1;
 	}
 	public BPlusTree() {
-		root = new Node();
+		root = null;
 		System.out.println("BPlusTree null constructor");
 	}
 
@@ -64,6 +64,9 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @param value
 	 */
 	public void insert(K key, T value) {
+		if(root==null){
+			root = new LeafNode<K,T>(key, value); return;
+		}
 		if(root.getKeys() == null) {
 			ArrayList<K> keys = new ArrayList<K>();
 			keys.add(key);
@@ -372,5 +375,4 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	String result3 = bplus.search(3);
 	System.out.println(result3);
 	}
-
 }
