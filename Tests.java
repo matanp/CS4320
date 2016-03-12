@@ -65,6 +65,7 @@ public class Tests {
 		}
 		BPlusTree<Integer, String> tree = new BPlusTree<Integer, String>();
 		Utils.bulkInsert(tree, exampleNumbers, primeNumberStrings);
+		System.out.println("About to call print tree");
 		Utils.printTree(tree);
 		tree.delete(13);
 		tree.delete(17);
