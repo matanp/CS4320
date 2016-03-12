@@ -16,8 +16,6 @@ public class Utils {
 	public static <K extends Comparable<K>, T> void 
 	    bulkInsert(BPlusTree<K,T> b, K[] tests, T[] testValues) {
 		for (int i = 0; i < tests.length; i++) {
-			System.out.println("Bulk Insert Called");
-			System.out.println(b.root.getKeys());
 			b.insert(tests[i], testValues[i]);
 		}
 
@@ -44,7 +42,6 @@ public class Utils {
     Node<K,T> target = queue.poll();
     nodesInCurrentLevel--;
     if (target.isLeafNode) {
-      System.out.println("Output tree. Leaf Node Keys: " + target.getKeys());
       LeafNode<K,T> leaf = (LeafNode<K,T>) target;
       result += "[";
       for (int i = 0; i < leaf.keys.size(); i++) {
@@ -64,8 +61,7 @@ public class Utils {
   
       }
     } else {
-      System.out.println("Output tree. Not Leaf Node Keys: " + target + ", " + target.getKeys());
-      IndexNode<K,T> index = new IndexNode<K, T>(target.getKeys().get(0));
+      IndexNode<K,T> index = ((IndexNode<K,T>) target);
       result += "@";
       for (int i = 0; i < index.keys.size(); i++) {
         result += "" + index.keys.get(i) + "/";
@@ -97,13 +93,7 @@ public class Utils {
 	 * @param root
 	 */
 	public static <K extends Comparable<K>,T> void printTree(BPlusTree<K,T> tree){
-		System.out.println("Print Tree Called");
-		try {
 		System.out.println(outputTree(tree));
-		} catch(Exception e) {
-			System.out.println("Failure: " + e.getMessage());
-			System.out.println("Failure pt2: " + e);
-		}
 	}
 
 }

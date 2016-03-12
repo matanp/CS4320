@@ -66,37 +66,32 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	public void insert(K key, T value) {
 		if(root==null){
 			root = new LeafNode<K,T>(key, value); return;
-		}
-		if(root.getKeys() == null) {
-			ArrayList<K> keys = new ArrayList<K>();
-			keys.add(key);
-			root = new LeafNode<K,T>(key,value);
 		} else {
-		K pair1 = null;
-		Node<K,T> pair2 = null; 
-		Node<K,T> res = insertHelper(root, key, value, pair1, pair2);
-		if(res != null && !root.isLeafNode){ //Root needs to be split
-			IndexNode<K,T> root1 = (IndexNode<K,T>) root;
-			root1.keys.add(res.keys.get(0));
-			Collections.sort(root1.keys);
-			int i = root1.keys.indexOf(res.keys.get(0));
-			root1.children.add(i, res);
-			System.out.println(root1.keys.toString());
-			ArrayList<K> firstkeys = new ArrayList<K>(root1.keys.subList(0, D));
-			ArrayList<K> secondkeys = new ArrayList<K>(root1.getKeys().subList(D+1, root.getKeys().size()));
-			ArrayList<Node<K,T>> firstchildren = new ArrayList<Node<K,T>>(root1.children.subList(0, D+1));
-			ArrayList<Node<K,T>> secondchildren = new ArrayList<Node<K,T>>(root1.children.subList(D+1, root1.children.size()));
-			IndexNode<K,T> first = new IndexNode<K,T>(firstkeys, firstchildren);
-			IndexNode<K,T> second = new IndexNode<K,T>(secondkeys, secondchildren);
-			ArrayList<Node<K,T>> newchildren = new ArrayList<Node<K,T>>();
-			newchildren.add(first); 
-			newchildren.add(second);
-			IndexNode<K,T> newroot = new IndexNode<K,T>(root1.keys.get(D), newchildren.get(0), newchildren.get(1));
-			root = newroot;
-		} else if(res != null && root.isLeafNode) {
-			IndexNode<K,T> newroot = new IndexNode<K,T>(res.keys.get(0), root, res);
-			root = newroot;
-		}
+			K pair1 = null;
+			Node<K,T> pair2 = null; 
+			Node<K,T> res = insertHelper(root, key, value, pair1, pair2);
+			if(res != null && !root.isLeafNode){ //Root needs to be split
+				IndexNode<K,T> root1 = (IndexNode<K,T>) root;
+				root1.keys.add(res.keys.get(0));
+				Collections.sort(root1.keys);
+				int i = root1.keys.indexOf(res.keys.get(0));
+				root1.children.add(i, res);
+				System.out.println(root1.keys.toString());
+				ArrayList<K> firstkeys = new ArrayList<K>(root1.keys.subList(0, D));
+				ArrayList<K> secondkeys = new ArrayList<K>(root1.getKeys().subList(D+1, root.getKeys().size()));
+				ArrayList<Node<K,T>> firstchildren = new ArrayList<Node<K,T>>(root1.children.subList(0, D+1));
+				ArrayList<Node<K,T>> secondchildren = new ArrayList<Node<K,T>>(root1.children.subList(D+1, root1.children.size()));
+				IndexNode<K,T> first = new IndexNode<K,T>(firstkeys, firstchildren);
+				IndexNode<K,T> second = new IndexNode<K,T>(secondkeys, secondchildren);
+				ArrayList<Node<K,T>> newchildren = new ArrayList<Node<K,T>>();
+				newchildren.add(first); 
+				newchildren.add(second);
+				IndexNode<K,T> newroot = new IndexNode<K,T>(root1.keys.get(D), newchildren.get(0), newchildren.get(1));
+				root = newroot;
+			} else if(res != null && root.isLeafNode) {
+				IndexNode<K,T> newroot = new IndexNode<K,T>(res.keys.get(0), root, res);
+				root = newroot;
+			}
 		}
 	}
 
@@ -123,7 +118,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 				int k = root1.keys.indexOf(res.keys.get(0));
 				root1.children.add(k, res);
 				if(root1.isOverflowed()) {
-					ArrayList<K> firstkeys = new ArrayList<K>(root1.getKeys().subList(0, D));
+					ArrayList<K> firstkeys = new ArrayList<K>(root1.getKeys().subList(0, D+1));
 					ArrayList<K> secondkeys = new ArrayList<K>(root1.getKeys().subList(D+1, root1.getKeys().size()));
 					ArrayList<Node<K,T>> firstchildren = new ArrayList<Node<K,T>>(root1.children.subList(0, D+2));
 					ArrayList<Node<K,T>> secondchildren = new ArrayList<Node<K,T>>(root1.children.subList(D+2, root1.children.size()));
@@ -144,9 +139,9 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			if(!root1.isOverflowed()){ //There's room to insert the pair
 				return null;
 			} else {
-				ArrayList<K> keys1 = new ArrayList<K>(root1.keys.subList(0, D));
+				ArrayList<K> keys1 = new ArrayList<K>(root1.keys.subList(0, D+1));
 				ArrayList<K> keys2 = new ArrayList<K>(root1.keys.subList(D+1, root1.keys.size()));
-				ArrayList<T> values1 = new ArrayList<T>(root1.values.subList(0, D));
+				ArrayList<T> values1 = new ArrayList<T>(root1.values.subList(0, D+1));
 				ArrayList<T> values2 = new ArrayList<T>(root1.values.subList(D+1, root1.values.size()));
 				root1.keys = keys1;
 				root1.values = values1;
@@ -156,6 +151,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 				}
 				newLeaf.nextLeaf = root1.nextLeaf;
 				root1.nextLeaf = newLeaf;
+				newLeaf.previousLeaf = root1;
 				return newLeaf;
 			}
 		}

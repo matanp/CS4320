@@ -6,7 +6,17 @@ import java.util.Collections;
 import org.junit.Test;
 
 public class Tests {
-
+	@Test
+	public void testInsert() {
+		System.out.println("testing insert");
+		BPlusTree<Integer, Integer> tree = new BPlusTree<Integer, Integer>();
+		tree.insert(1, 1);
+		tree.insert(2, 2);
+		tree.insert(3, 3);
+		tree.insert(4, 4);
+		tree.insert(5, 5);
+		System.out.println(Utils.outputTree(tree).toString());
+	}
 	// add some nodes, see if it comes out right, delete one, see if it's right
 	@Test
 	public void testSimpleHybrid() {
@@ -65,7 +75,6 @@ public class Tests {
 		}
 		BPlusTree<Integer, String> tree = new BPlusTree<Integer, String>();
 		Utils.bulkInsert(tree, exampleNumbers, primeNumberStrings);
-		System.out.println("About to call print tree");
 		Utils.printTree(tree);
 		tree.delete(13);
 		tree.delete(17);

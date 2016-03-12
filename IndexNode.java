@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -23,16 +22,6 @@ public class IndexNode<K extends Comparable<K>, T> extends Node<K,T> {
 		keys = new ArrayList<K>(newKeys);
 		children = new ArrayList<Node<K,T>>(newChildren);
 
-	}
-	
-	public IndexNode(K key) {
-		isLeafNode = false;
-		keys = new ArrayList<K>();
-		System.out.println("Key: " + key);
-		keys.add(key);
-		children = new ArrayList<Node<K,T>>();
-		children.add(new Node<K,T>());
-		children.add(new Node<K,T>());	
 	}
 
 	/**
