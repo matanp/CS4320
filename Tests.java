@@ -6,17 +6,6 @@ import java.util.Collections;
 import org.junit.Test;
 
 public class Tests {
-	@Test
-	public void testInsert() {
-		System.out.println("testing insert");
-		BPlusTree<Integer, Integer> tree = new BPlusTree<Integer, Integer>();
-		tree.insert(1, 1);
-		tree.insert(2, 2);
-		tree.insert(3, 3);
-		tree.insert(4, 4);
-		tree.insert(5, 5);
-		System.out.println(Utils.outputTree(tree).toString());
-	}
 	// add some nodes, see if it comes out right, delete one, see if it's right
 	@Test
 	public void testSimpleHybrid() {
@@ -28,7 +17,6 @@ public class Tests {
 		}
 		BPlusTree<Character, String> tree = new BPlusTree<Character, String>();
 		Utils.bulkInsert(tree, alphabet, alphabetStrings);
-
 		String test = Utils.outputTree(tree);
 		String correct = "@c/e/@%%[(a,a);(b,b);]#[(c,c);(d,d);]#[(e,e);(f,f);(g,g);]$%%";
 
@@ -45,6 +33,7 @@ public class Tests {
 	// add some nodes, see if it comes out right, delete one, see if it's right
 	@Test
 	public void testSimpleHybrid2() {
+		System.out.println("Testing Simple Hybrid 2");
 		Integer primeNumbers[] = new Integer[] { 2, 4, 5, 7, 8, 9, 10, 11, 12,
 				13, 14, 15, 16 };
 		String primeNumberStrings[] = new String[primeNumbers.length];
@@ -56,7 +45,7 @@ public class Tests {
 
 		String test = Utils.outputTree(tree);
 		String correct = "@10/@%%@5/8/@@12/14/@%%[(2,2);(4,4);]#[(5,5);(7,7);]#[(8,8);(9,9);]$[(10,10);(11,11);]#[(12,12);(13,13);]#[(14,14);(15,15);(16,16);]$%%";
-		assertEquals(test, correct);
+		assertEquals(correct, test);
 
 		tree.delete(2);
 		test = Utils.outputTree(tree);

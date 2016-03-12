@@ -15,12 +15,10 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	public static final int D = 2;
 
 	public BPlusTree(Node<K,T> root1) {
-		System.out.println("BPlusTree non null constructor" + root1.getKeys());
 		root = root1;
 	}
 	public BPlusTree() {
 		root = null;
-		System.out.println("BPlusTree null constructor");
 	}
 
 
@@ -101,11 +99,11 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			IndexNode<K,T> root1 = (IndexNode<K,T>) root;
 			int i=0;
 			for(int j=1; j<root1.keys.size(); j++) {
-				if(key.compareTo(root1.keys.get(j))<0) {
+				if(key.compareTo(root1.keys.get(j))>=0) {
 					i++;
 				}
 			}
-			if(key.compareTo(root1.keys.get(root1.keys.size()-1))>=0){
+			if(root1.keys.size()>0 && key.compareTo(root1.keys.get(root1.keys.size()-1))>=0){
 				i++;
 			}
 			Node<K,T> newnode = root1.children.get(i);
@@ -116,12 +114,12 @@ public class BPlusTree<K extends Comparable<K>, T> {
 				root1.keys.add(res.keys.get(0));
 				Collections.sort(root1.getKeys());
 				int k = root1.keys.indexOf(res.keys.get(0));
-				root1.children.add(k, res);
+				root1.children.add(k+1, res);
 				if(root1.isOverflowed()) {
-					ArrayList<K> firstkeys = new ArrayList<K>(root1.getKeys().subList(0, D+1));
-					ArrayList<K> secondkeys = new ArrayList<K>(root1.getKeys().subList(D+1, root1.getKeys().size()));
-					ArrayList<Node<K,T>> firstchildren = new ArrayList<Node<K,T>>(root1.children.subList(0, D+2));
-					ArrayList<Node<K,T>> secondchildren = new ArrayList<Node<K,T>>(root1.children.subList(D+2, root1.children.size()));
+					ArrayList<K> firstkeys = new ArrayList<K>(root1.getKeys().subList(0, D));
+					ArrayList<K> secondkeys = new ArrayList<K>(root1.getKeys().subList(D, root1.getKeys().size()));
+					ArrayList<Node<K,T>> firstchildren = new ArrayList<Node<K,T>>(root1.children.subList(0, D+1));
+					ArrayList<Node<K,T>> secondchildren = new ArrayList<Node<K,T>>(root1.children.subList(D+1, root1.children.size()));
 					root1.keys = firstkeys;
 					root1.children = firstchildren;
 					IndexNode<K,T> second = new IndexNode<K,T>(secondkeys, secondchildren); 
@@ -139,17 +137,18 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			if(!root1.isOverflowed()){ //There's room to insert the pair
 				return null;
 			} else {
-				ArrayList<K> keys1 = new ArrayList<K>(root1.keys.subList(0, D+1));
-				ArrayList<K> keys2 = new ArrayList<K>(root1.keys.subList(D+1, root1.keys.size()));
-				ArrayList<T> values1 = new ArrayList<T>(root1.values.subList(0, D+1));
-				ArrayList<T> values2 = new ArrayList<T>(root1.values.subList(D+1, root1.values.size()));
+				ArrayList<K> keys1 = new ArrayList<K>(root1.keys.subList(0, D));
+				ArrayList<K> keys2 = new ArrayList<K>(root1.keys.subList(D, root1.keys.size()));
+				ArrayList<T> values1 = new ArrayList<T>(root1.values.subList(0, D));
+				ArrayList<T> values2 = new ArrayList<T>(root1.values.subList(D, root1.values.size()));
 				root1.keys = keys1;
 				root1.values = values1;
 				LeafNode<K,T> newLeaf = new LeafNode<K,T>(keys2, values2);
+				LeafNode<K,T> third = root1.nextLeaf;
 				if(root1.nextLeaf != null) {
-					root1.nextLeaf.previousLeaf = newLeaf;
+					third.previousLeaf = newLeaf;
 				}
-				newLeaf.nextLeaf = root1.nextLeaf;
+				newLeaf.nextLeaf = third;
 				root1.nextLeaf = newLeaf;
 				newLeaf.previousLeaf = root1;
 				return newLeaf;
@@ -199,7 +198,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			IndexNode<K,T> node1 = (IndexNode<K,T>) node;
 			int i = 0;
 			for(int j=1; j<node1.keys.size(); j++) {
-				if(key.compareTo(node1.keys.get(j))<0) {
+				if(key.compareTo(node1.keys.get(j))>=0) {
 					i++;
 				}
 			}
@@ -210,6 +209,8 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			if(res == null) {
 				return null;
 			} else {
+				node1.children.set(node1.children.indexOf(res)-1, node1.children.get(node1.children.indexOf(res)-1));
+				node1.keys.remove(node1.keys.indexOf(res.keys.get(0)));
 				node1.children.remove(node1.children.indexOf(res));
 				if(!node1.isUnderflowed()){
 					return null;
@@ -309,6 +310,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 					right.keys = keys2;
 					right.values = values2;
 					int l = parent.children.indexOf(right);
+					System.out.println(l);
 					parent.keys.remove(l);
 					parent.keys.add(l, right.keys.get(0));
 					return null;
